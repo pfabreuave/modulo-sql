@@ -1,19 +1,13 @@
--- Relação de clientes dependentes
 
+---*********************modelo 1********************************
 
-SELECT
-                cliente_conta.id_cliente as cliente,
-                cliente.nome as "NOME DO CLIENTE",
-                cliente.cpf as "C.P.F.",
-                cliente_conta.id_cliente_conta as representante,
-                cliente_conta.id_conta as conta_representante,
-                conta.saldo as "SALDO NA CONTA",
-                dependente
-
-FROM cliente_conta
-join cliente   
-	on (cliente_conta.id_cliente = cliente.id_cliente) 
-join conta   
-	on (cliente_conta.id_conta = conta.id_conta) 	
-where cliente_conta.dependente = true;  
---
+select distinct 
+	   c.nome, 
+	   rep.id_conta,
+       CASE WHEN rep.dependente = false 
+       THEN 'REPRESENTANTE' else '' END AS GERARQUIA
+from cliente_conta as dep 
+JOIN cliente_conta as rep on dep.id_conta = rep.id_conta
+join cliente c on rep.id_cliente = c.id_cliente
+where dep.dependente = true
+order by rep.id_conta, GERARQUIA desc;
